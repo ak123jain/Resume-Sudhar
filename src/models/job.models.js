@@ -18,6 +18,10 @@ const JobSchema = new mongoose.Schema({
       type: String,
       required: true
     },
+    jobavatar:{
+        type : String,
+        required : false,
+    },
     requiredSkills: [String], // Array of skills needed
     postedAt: {
       type: Date,

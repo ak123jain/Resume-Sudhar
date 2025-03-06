@@ -1,9 +1,9 @@
 
 import jwt from "jsonwebtoken";
-import { ApiError } from "../utils/ApiError";
+import { ApiError } from "../utils/ApiError.js";
 
 
-const verify = async() =>{
+export const verifyjwt = async() =>{
     try {
         const token = req.header("Authorization").replace("Bearer ", "");
 
