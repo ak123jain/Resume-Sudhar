@@ -25,9 +25,11 @@ app.use(cookieParser())
 // import userRouter from "./routers/userRouter.js";
 import resumeRouter from "./routers/resume.route.js";
 import jobRouter from "./routers/job.route.js";
+import interviewRouter from "./routers/interview.route.js";
 
 // app.use('/users',userRouter)
 app.use('/resume',resumeRouter)
 app.use('/job',jobRouter)
+app.use('/interview',interviewRouter)
 
 export {app}

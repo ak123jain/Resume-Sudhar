@@ -22,7 +22,10 @@ const JobSchema = new mongoose.Schema({
         type : String,
         required : false,
     },
-    requiredSkills: [String], // Array of skills needed
+    requiredSkills: {
+      type :  [String],
+      default : []
+    }, // Array of skills needed
     postedAt: {
       type: Date,
       default: Date.now
