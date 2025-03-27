@@ -1,5 +1,5 @@
-import { asynchandler } from "../utils/asynchandler"
-import { User } from "../models/user.model.js";
+import { asynchandler } from "../utils/asynchandler.js"
+import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import jwt from "jsonwebtoken";
 import { ApiResponse } from "../utils/ApiResponse.js"; 
@@ -49,7 +49,7 @@ export const registeruser = asynchandler(async (req , res)=>{
         throw new ApiError(400, "User already exist");
     }
 
-    const avatarLocalPath = req.files?.avatar[0]?.path;
+    const avatarLocalPath = req.file?.path;
 
     if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar file is required");

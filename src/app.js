@@ -13,6 +13,11 @@ app.use(express.json({limit : "16kb"}))
 app.use(express.urlencoded({extended: true, limit: "16kb"}))
 app.use(express.static("public"))
 
+app.use((req, res, next) => {
+    console.log("Request Body:", req.body);
+    next();
+});
+
 app.use(cookieParser())
 
 
@@ -26,10 +31,12 @@ app.use(cookieParser())
 import resumeRouter from "./routers/resume.route.js";
 import jobRouter from "./routers/job.route.js";
 import interviewRouter from "./routers/interview.route.js";
+import userRouter from "./routers/user.route.js";
 
 // app.use('/users',userRouter)
 app.use('/resume',resumeRouter)
 app.use('/job',jobRouter)
 app.use('/interview',interviewRouter)
+app.use('/user',userRouter)
 
 export {app}

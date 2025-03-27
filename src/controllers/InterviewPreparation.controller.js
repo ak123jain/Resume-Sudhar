@@ -55,6 +55,10 @@ export const generateContent = asynchandler(async (req, res) => {
   **Answer:** [Detailed Answer]
 
   create a space between each question and answer. 
+
+  write ans in limited 5 lines only
+
+   
   `;
   
   try {

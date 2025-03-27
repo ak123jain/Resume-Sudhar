@@ -248,6 +248,12 @@ export const uploadresume = asynchandler(async (req, res) => {
 
         await resume.save();
 
+        const resumeId = resume.resumeId.toString(); // ✅ Get MongoDB-generated ID
+
+        console.log("✅ Resume ID:", resumeId);
+        
+
+
 
         let matchScore = null;
         let explanation = "No response";
@@ -276,7 +282,7 @@ export const uploadresume = asynchandler(async (req, res) => {
         }
 
         return res.status(200).json(
-            new ApiResponse(200, { extractedText, matchScore, explanation }, "Resume uploaded successfully")
+            new ApiResponse(200, { extractedText, matchScore, explanation , resumeId }, "Resume uploaded successfully")
         );
     } catch (error) {
         console.error("❌ Error processing resume:", error);
@@ -338,3 +344,46 @@ export const uploadresume = asynchandler(async (req, res) => {
  });
 
 
+ export const createresume = asynchandler(async (req, res) => {
+    console.log("Received request body:", req.body); // Log the full body
+
+    const { name, email, phone, summary, experience, education, skills } = req.body;
+
+    if (!name || !email || !phone) {
+        throw new ApiError(400, "All fields are required");
+    }
+
+    console.log({ name, email, phone, summary, experience, education, skills });
+   
+    
+
+    const resumeData = { name, email, phone, summary, experience, education, skills };
+
+    const prompt = `
+        Create a professional resume using the following details:
+        - Name: ${resumeData.name}
+        - Email: ${resumeData.email}
+        - Phone: ${resumeData.phone}
+        - Summary: ${resumeData.summary || "No summary provided"}
+        - Experience: ${JSON.stringify(resumeData.experience)}
+        - Education: ${JSON.stringify(resumeData.education)}
+        - Skills: ${resumeData.skills?.join(", ") || "No skills provided"}
+        
+        Format it cleanly using bullet points and professional formatting.
+    `;
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+
+    try {
+        const response = await model.generateContent(prompt);
+
+        const resumetext =
+            response.response?.candidates?.[0]?.content?.parts?.[0]?.text ||
+            "No suggestions available";
+
+        return res.status(200).json(new ApiResponse(200, { resumetext }));
+    } catch (error) {
+        console.error("Error generating resume:", error);
+        throw new ApiError(500, "Failed to generate resume");
+    }
+});
