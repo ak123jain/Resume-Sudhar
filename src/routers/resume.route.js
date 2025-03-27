@@ -12,6 +12,6 @@ router.route("/upload").post(
 
 router.route("/:resumeId/suggestion").get(analizeresume)
 
-router.route("/createresume").post(createresume)
+router.route("/createresume").post(upload.none() , createresume)
 
 export default router;

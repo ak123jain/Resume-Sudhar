@@ -344,18 +344,72 @@ export const uploadresume = asynchandler(async (req, res) => {
  });
 
 
- export const createresume = asynchandler(async (req, res) => {
-    console.log("Received request body:", req.body); // Log the full body
+//  export const createresume = asynchandler(async (req, res) => {
 
-    const { name, email, phone, summary, experience, education, skills } = req.body;
+
+//     console.log("Received request body:", req.body); // Log the full body
+//     console.log("✅ Headers:", req.headers);
+
+//     const { name, email, phone, summary, experience, education, skills } = req.body;
+
+//     if (!name || !email || !phone) {
+//         throw new ApiError(400, "All fields are required");
+//     }
+
+//     console.log({ name, email, phone, summary, experience, education, skills });
+   
+    
+
+//     const resumeData = { name, email, phone, summary, experience, education, skills };
+
+//     const prompt = `
+//         Create a professional resume using the following details:
+//         - Name: ${resumeData.name}
+//         - Email: ${resumeData.email}
+//         - Phone: ${resumeData.phone}
+//         - Summary: ${resumeData.summary || "No summary provided"}
+//         - Experience: ${JSON.stringify(resumeData.experience)}
+//         - Education: ${JSON.stringify(resumeData.education)}
+//         - Skills: ${resumeData.skills?.join(", ") || "No skills provided"}
+        
+//         Format it cleanly using bullet points and professional formatting.
+//     `;
+
+//     const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+
+//     try {
+//         const response = await model.generateContent(prompt);
+
+//         const resumetext =
+//             response.response?.candidates?.[0]?.content?.parts?.[0]?.text ||
+//             "No suggestions available";
+
+//         return res.status(200).json(new ApiResponse(200, { resumetext }));
+//     } catch (error) {
+//         console.error("Error generating resume:", error);
+//         throw new ApiError(500, "Failed to generate resume");
+//     }
+// });
+
+
+export const createresume = asynchandler(async (req, res) => {
+    console.log("Received request body:", req.body); // Debugging
+
+    let { name, email, phone, summary, experience, education, skills } = req.body;
 
     if (!name || !email || !phone) {
         throw new ApiError(400, "All fields are required");
     }
 
+    // ✅ Ensure `experience` and `education` are arrays (or single strings)
+    experience = typeof experience === "string" ? [experience] : experience;
+    education = typeof education === "string" ? [education] : education;
+
+     
+    // ✅ Convert `skills` to an array
+    skills = typeof skills === "string" ? skills.split(",").map(skill => skill.trim()) : [];
+
     console.log({ name, email, phone, summary, experience, education, skills });
-   
-    
 
     const resumeData = { name, email, phone, summary, experience, education, skills };
 
@@ -365,10 +419,10 @@ export const uploadresume = asynchandler(async (req, res) => {
         - Email: ${resumeData.email}
         - Phone: ${resumeData.phone}
         - Summary: ${resumeData.summary || "No summary provided"}
-        - Experience: ${JSON.stringify(resumeData.experience)}
-        - Education: ${JSON.stringify(resumeData.education)}
-        - Skills: ${resumeData.skills?.join(", ") || "No skills provided"}
-        
+        - Experience: ${resumeData.experience.join(", ")}
+        - Education: ${resumeData.education.join(", ")}
+        - Skills: ${resumeData.skills.join(", ") || "No skills provided"}
+
         Format it cleanly using bullet points and professional formatting.
     `;
 
@@ -376,11 +430,7 @@ export const uploadresume = asynchandler(async (req, res) => {
 
     try {
         const response = await model.generateContent(prompt);
-
-        const resumetext =
-            response.response?.candidates?.[0]?.content?.parts?.[0]?.text ||
-            "No suggestions available";
-
+        const resumetext = response.response?.candidates?.[0]?.content?.parts?.[0]?.text || "No suggestions available";
         return res.status(200).json(new ApiResponse(200, { resumetext }));
     } catch (error) {
         console.error("Error generating resume:", error);
